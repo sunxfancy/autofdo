@@ -528,8 +528,8 @@ function (config_with_llvm)
   add_custom_command(PRE_BUILD
     OUTPUT prepare_cmds
     COMMAND ln -s -f ${CMAKE_HOME_DIRECTORY}/testdata testdata)
-  add_custom_target(prepare ALL
-    DEPENDS prepare_cmds)
+  # add_custom_target(prepare ALL
+  #   DEPENDS prepare_cmds)
 endfunction()
 
 if (DEFINED LLVM_PATH)
