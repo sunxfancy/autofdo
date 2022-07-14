@@ -220,6 +220,9 @@ function (config_with_llvm)
   add_library(create_llvm_prof_object OBJECT create_llvm_prof.cc)
   add_dependencies(create_llvm_prof_object llvm_propeller_options)
 
+  add_library(create_reg_prof_object OBJECT create_reg_prof.cc)
+  add_dependencies(create_reg_prof_object llvm_propeller_options)
+
   add_library(sample_reader OBJECT sample_reader.cc)
   target_include_directories(sample_reader PUBLIC util)
   target_link_libraries(sample_reader absl::base quipper_perf LLVMObject)
@@ -326,6 +329,28 @@ function (config_with_llvm)
     symbol_map
     LLVMDebugInfoDWARF
     LLVMSupport)
+
+  add_executable(create_reg_prof)
+  target_link_libraries(create_reg_prof 
+    absl::base
+    absl::flags
+    absl::flags_parse
+    absl::status
+    absl::str_format
+    absl::strings
+    create_reg_prof_object
+    glog
+    llvm_profile_reader
+    llvm_profile_writer
+    llvm_propeller_objects
+    perfdata_reader
+    profile_creator
+    quipper_perf
+    sample_reader
+    symbol_map
+    LLVMDebugInfoDWARF
+    LLVMSupport)
+
 
   add_executable(symbol_map_test symbol_map_test.cc)
   target_link_libraries(symbol_map_test
