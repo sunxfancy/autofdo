@@ -82,10 +82,11 @@ class PropellerWholeProgramInfo : public AbstractPropellerWholeProgramInfo {
 
   const PropellerOptions &options() const { return options_; }
 
+  const BinaryPerfInfo &binray_perf_info() const { return binary_perf_info_; }
+
   const BinaryMMaps &binary_mmaps() const {
     return binary_perf_info_.binary_mmaps;
   }
-
   const PerfDataReader &perf_data_reader() const { return perf_data_reader_; }
 
   const SymTabTy &symtab() const { return symtab_; }
