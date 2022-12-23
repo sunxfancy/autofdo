@@ -561,41 +561,50 @@ function (config_with_llvm)
   add_executable(hot_list_creator hot_list_creator.cc)
   target_link_libraries(hot_list_creator 
     absl::base
+    absl::check
     absl::flags
     absl::flags_parse
     absl::status
+    absl::statusor
     absl::str_format
     absl::strings
     glog
     llvm_profile_reader
     llvm_profile_writer
     llvm_propeller_objects
+    llvm_propeller_perf_data_provider
     perfdata_reader
     profile_creator
     quipper_perf
     sample_reader
+    status_provider
     symbol_map
     LLVMDebugInfoDWARF
     LLVMSupport)
+  add_dependencies(hot_list_creator llvm_propeller_whole_program_info)
 
   add_library(reg_profiler_objs OBJECT reg_profiler.cc)
   add_executable(reg_profiler reg_profiler_main.cc)
   target_link_libraries(reg_profiler
     absl::base
+    absl::check
     absl::flags
     absl::flags_parse
     absl::status
+    absl::statusor
     absl::str_format
     absl::strings
     glog
     llvm_profile_reader
     llvm_profile_writer
-    reg_profiler_objs
     llvm_propeller_objects
+    reg_profiler_objs
+    llvm_propeller_perf_data_provider
     perfdata_reader
     profile_creator
     quipper_perf
     sample_reader
+    status_provider
     symbol_map
     LLVMDebugInfoDWARF
     LLVMSupport
@@ -606,14 +615,18 @@ function (config_with_llvm)
     LLVMX86Info
     LLVMX86Desc
     LLVMX86TargetMCA
-    LLVMX86Disassembler)
-
+    LLVMX86Disassembler
+    )
+  add_dependencies(reg_profiler_objs llvm_propeller_whole_program_info)
+  
   add_executable(reg_profiler_test reg_profiler_test.cc)
   target_link_libraries(reg_profiler_test
     absl::base
+    absl::check
     absl::flags
     absl::flags_parse
     absl::status
+    absl::statusor
     absl::str_format
     absl::strings
     glog
@@ -621,12 +634,14 @@ function (config_with_llvm)
     gtest_main
     llvm_profile_reader
     llvm_profile_writer
-    reg_profiler_objs
     llvm_propeller_objects
+    reg_profiler_objs
+    llvm_propeller_perf_data_provider
     perfdata_reader
     profile_creator
     quipper_perf
     sample_reader
+    status_provider
     symbol_map
     LLVMDebugInfoDWARF
     LLVMSupport
@@ -637,7 +652,9 @@ function (config_with_llvm)
     LLVMX86Info
     LLVMX86Desc
     LLVMX86TargetMCA
-    LLVMX86Disassembler)
+    LLVMX86Disassembler
+    )
+  add_dependencies(reg_profiler_test llvm_propeller_whole_program_info)
 
   add_custom_command(PRE_BUILD
     OUTPUT prepare_cmds

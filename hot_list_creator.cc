@@ -29,6 +29,7 @@
 using devtools_crosstool_autofdo::PropellerOptions;
 using devtools_crosstool_autofdo::PropellerOptionsBuilder;
 using devtools_crosstool_autofdo::PropellerWholeProgramInfo;
+using devtools_crosstool_autofdo::CfgCreationMode;
 
 ABSL_FLAG(std::string, binary, "", "Path to the binary");
 ABSL_FLAG(std::string, profile, "", "Path to the profile data ");
@@ -73,9 +74,9 @@ struct Record {
 int main(int argc, char* argv[]) {
   auto options = getOptions();
   auto whole_program_info = PropellerWholeProgramInfo::Create(options);
-  auto s = whole_program_info->CreateCfgs();
-  if (!s) {
-    LOG(ERROR) << s;
+  auto s = whole_program_info->CreateCfgs(CfgCreationMode::kAllFunctions);
+  if (!s.ok()) {
+    LOG(ERROR) << s.message();
     return 1;
   }
 
