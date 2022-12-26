@@ -21,9 +21,10 @@
 #include "llvm_propeller_whole_program_info.h"
 #include "reg_profiler.h"
 #include "third_party/abseil/absl/flags/flag.h"
+#include "third_party/abseil/absl/flags/parse.h"
+#include "third_party/abseil/absl/flags/usage.h"
 #include "third_party/abseil/absl/status/status.h"
 #include "third_party/abseil/absl/strings/str_split.h"
-
 using devtools_crosstool_autofdo::PropellerOptions;
 using devtools_crosstool_autofdo::PropellerOptionsBuilder;
 using devtools_crosstool_autofdo::PropellerWholeProgramInfo;
@@ -56,13 +57,18 @@ PropellerOptions getOptions() {
     for (const std::string &pf : perf_files)
       if (!pf.empty()) option_builder.AddPerfNames(pf);
   }
-  return PropellerOptions(
-      option_builder.SetBinaryName(absl::GetFlag(FLAGS_binary)));
+  std::string binary = absl::GetFlag(FLAGS_binary);
+
+
+  return PropellerOptions(option_builder.SetBinaryName(binary));
 }
 
 }  // namespace
 
 int main(int argc, char *argv[]) {
+  absl::SetProgramUsageMessage(argv[0]);
+  absl::ParseCommandLine(argc, argv);
+
   auto options = getOptions();
   auto whole_program_info = PropellerWholeProgramInfo::Create(options);
   auto s = whole_program_info->CreateCfgs(CfgCreationMode::kAllFunctions);

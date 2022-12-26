@@ -22,6 +22,8 @@
 #include "llvm_propeller_options_builder.h"
 #include "llvm_propeller_whole_program_info.h"
 #include "third_party/abseil/absl/flags/flag.h"
+#include "third_party/abseil/absl/flags/usage.h"
+#include "third_party/abseil/absl/flags/parse.h"
 #include "third_party/abseil/absl/status/status.h"
 #include "third_party/abseil/absl/strings/str_split.h"
 
@@ -72,6 +74,9 @@ struct Record {
 };
 
 int main(int argc, char* argv[]) {
+  absl::SetProgramUsageMessage(argv[0]);
+  absl::ParseCommandLine(argc, argv);
+
   auto options = getOptions();
   auto whole_program_info = PropellerWholeProgramInfo::Create(options);
   auto s = whole_program_info->CreateCfgs(CfgCreationMode::kAllFunctions);
