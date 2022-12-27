@@ -111,7 +111,9 @@ bool PushPopCounter::Disassembler::DisassembleRange(
 
 PushPopCounter::PushAndPop PushPopCounter::Count() {
   for (auto &section : elf_obj_->sections()) {
-    LOG(INFO) << section.getName()->str() << " start at "
+    auto name = section.getName();
+    if (name)
+      LOG(INFO) << name->str() << " start at "
               << section.getAddress();
   }
   bool use_filter = !filter_functions_.empty();
@@ -129,7 +131,7 @@ PushPopCounter::PushAndPop PushPopCounter::Count() {
           [&](llvm::MCInst inst, Disassembler::Context &ctx) -> bool {
             if (ctx.mii->getName(inst.getOpcode()) == "PUSH64r") in_bb.push += 1;
             if (ctx.mii->getName(inst.getOpcode()) == "POP64r") in_bb.pop += 1;
-            llvm::errs() << ctx.mii->getName(inst.getOpcode()) << "\n";
+            // llvm::errs() << ctx.mii->getName(inst.getOpcode()) << "\n";
             return false;  // return true will stop disassembing
           });
       if (!success) { 
@@ -137,15 +139,18 @@ PushPopCounter::PushAndPop PushPopCounter::Count() {
         continue;
       }
       PushAndPop sum = (in_bb * node->freq());
-
       data_[all] += sum;
-      if (section.getName()->startswith(".text.unlikely"))
+
+      auto name = section.getName();
+      if (!name) continue;
+
+      if (name->startswith(".text.unlikely"))
         data_[in_unlikely] += sum;
-      if (section.getName()->startswith(".text.hot"))
+      if (name->startswith(".text.hot"))
         data_[in_hot] += sum;
-      if (section.getName()->startswith(".text.split"))
+      if (name->startswith(".text.split"))
         data_[in_split] += sum;
-      if (section.getName()->startswith(".text.startup"))
+      if (name->startswith(".text.startup"))
         data_[in_startup] += sum;
     }
   }
